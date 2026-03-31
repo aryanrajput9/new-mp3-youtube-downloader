@@ -116,13 +116,13 @@ app.get("/video", (req, res) => {
 
     res.header("Content-Disposition", 'attachment; filename="video.mp4"');
 
-    const yt = spawn("yt-dlp", [
-        "-f", "best",
+    const yt = spawn("python3", [
+        "-m", "yt_dlp",
+        "--dump-json",
         "--no-playlist",
         "--no-warnings",
         "--user-agent", "Mozilla/5.0",
         "--extractor-args", "youtube:player_client=android",
-        "-o", "-",
         url,
     ]);
 
