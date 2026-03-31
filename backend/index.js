@@ -3,11 +3,7 @@ const cors = require("cors");
 const { spawn } = require("child_process");
 
 const app = express();
-
-// 🔥 IMPORTANT (Render + frontend)
-app.use(cors({
-    origin: "*"
-}));
+app.use(cors());
 
 // 🔥 Normalize URL
 const cleanURL = (url) => {
@@ -29,122 +25,93 @@ const cleanURL = (url) => {
     }
 };
 
-// ✅ ROOT ROUTE (Render health check)
-app.get("/", (req, res) => {
-    res.send("API is running 🚀");
-});
-
 /* 🎥 VIDEO INFO */
-app.get("/info", (req, res) => {
-    let { url } = req.query;
+app.get("/info", async (req, res) => {
+    try {
+        let { url } = req.query;
+        url = cleanURL(url);
 
-    if (!url) return res.status(400).send("URL missing");
+        const yt = spawn("/opt/homebrew/bin/yt-dlp", [
+            "--dump-json",
+            "--no-playlist",
+            url,
+        ]);
 
-    url = cleanURL(url);
+        yt.on("error", (err) => {
+            console.log("❌ ERROR:", err);
+            res.status(500).send("yt-dlp error");
+        });
+        let data = "";
 
-    const yt = spawn("yt-dlp", [
-        "--dump-json",
-        "--no-playlist",
-        url,
-    ]);
+        yt.stdout.on("data", (chunk) => {
+            data += chunk;
+        });
 
-    let data = "";
-
-    yt.stdout.on("data", (chunk) => {
-        data += chunk;
-    });
-
-    yt.stderr.on("data", (err) => {
-        console.log("⚠️ STDERR:", err.toString());
-        // ❌ error flag mat lagao
-    });
-
-    yt.on("error", (err) => {
-        console.log("❌ SPAWN ERROR:", err);
-        if (!res.headersSent) {
-            return res.status(500).send("yt-dlp failed");
-        }
-    });
-
-    yt.on("close", (code) => {
-        if (res.headersSent) return; // 🔥 IMPORTANT
-
-        if (code !== 0) {
-            return res.status(500).send("Failed to fetch video info");
-        }
-
-        try {
+        yt.on("close", () => {
             const json = JSON.parse(data);
-
             res.json({
                 title: json.title,
                 thumbnail: json.thumbnail,
             });
-        } catch (e) {
-            console.log("❌ JSON ERROR:", e);
-            res.status(500).send("Parse error");
-        }
-    });
+        });
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).send("Info error");
+    }
 });
 
 /* 🎵 AUDIO */
 app.get("/audio", (req, res) => {
-    let { url } = req.query;
+    try {
+        let { url } = req.query;
+        url = cleanURL(url);
 
-    if (!url) return res.status(400).send("URL missing");
+        res.header("Content-Disposition", 'attachment; filename="audio.mp3"');
 
-    url = cleanURL(url);
+        const yt = spawn("yt-dlp", [
+            "-x",
+            "--audio-format", "mp3",
+            "-o", "-",
+            url,
+        ]);
 
-    res.header("Content-Disposition", 'attachment; filename="audio.mp3"');
+        yt.stdout.pipe(res);
 
-    const yt = spawn("yt-dlp", [
-        "-x",
-        "--audio-format", "mp3",
-        "-o", "-",
-        url,
-    ]);
+        yt.stderr.on("data", (err) => {
+            console.log("❌ AUDIO ERROR:", err.toString());
+        });
 
-    yt.stderr.on("data", (err) => {
-        console.log("❌ AUDIO ERROR:", err.toString());
-    });
-
-    yt.on("error", () => {
-        res.status(500).send("Audio failed");
-    });
-
-    yt.stdout.pipe(res);
+    } catch (err) {
+        console.log(err);
+        res.status(500).send("Audio error");
+    }
 });
 
 /* 🎬 VIDEO */
 app.get("/video", (req, res) => {
-    let { url } = req.query;
+    try {
+        let { url } = req.query;
+        url = cleanURL(url);
 
-    if (!url) return res.status(400).send("URL missing");
+        res.header("Content-Disposition", 'attachment; filename="video.mp4"');
 
-    url = cleanURL(url);
+        const yt = spawn("yt-dlp", [
+            "-f", "best",
+            "-o", "-",
+            url,
+        ]);
 
-    res.header("Content-Disposition", 'attachment; filename="video.mp4"');
+        yt.stdout.pipe(res);
 
-    const yt = spawn("yt-dlp", [
-        "-f", "best",
-        "-o", "-",
-        url,
-    ]);
+        yt.stderr.on("data", (err) => {
+            console.log("❌ VIDEO ERROR:", err.toString());
+        });
 
-    yt.stderr.on("data", (err) => {
-        console.log("❌ VIDEO ERROR:", err.toString());
-    });
-
-    yt.on("error", () => {
-        res.status(500).send("Video failed");
-    });
-
-    yt.stdout.pipe(res);
+    } catch (err) {
+        console.log(err);
+        res.status(500).send("Video error");
+    }
 });
 
-// 🔥 VERY IMPORTANT FOR RENDER
-const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-});
+app.listen(5000, () => console.log("🚀 Server running on port 5000"));
