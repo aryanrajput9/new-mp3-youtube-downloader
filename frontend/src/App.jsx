@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 
+// 🔥 CHANGE THIS AFTER DEPLOY
 const API = "http://localhost:5000";
 
 export default function App() {
@@ -35,44 +36,73 @@ export default function App() {
   };
 
   return (
-    <div className="app">
-      <div className="glass-card">
-        <h1>🚀 YT Downloader PRO</h1>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-indigo-900 to-black text-white">
 
-        <div className="input-box">
+      <div className="w-[90%] max-w-xl backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl p-6 shadow-2xl">
+
+        <h1 className="text-3xl font-bold text-center mb-6">
+          🚀 YT Downloader PRO
+        </h1>
+
+        {/* INPUT */}
+        <div className="flex gap-2 mb-5">
           <input
+            className="flex-1 p-3 rounded-lg bg-black/40 border border-white/20 outline-none focus:ring-2 focus:ring-purple-500"
             placeholder="Paste YouTube URL..."
             value={url}
             onChange={(e) => setUrl(e.target.value)}
           />
-          <button onClick={fetchInfo}>
+          <button
+            onClick={fetchInfo}
+            className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg font-semibold"
+          >
             {loading ? "..." : "Fetch"}
           </button>
         </div>
 
+        {/* VIDEO CARD */}
         {video && (
-          <div className="card">
-            <img src={video.thumbnail} alt="" />
-            <p className="title">{video.title}</p>
+          <div className="bg-black/40 p-4 rounded-xl border border-white/10">
 
-            <div className="type-buttons">
+            <img
+              src={video.thumbnail}
+              alt=""
+              className="rounded-lg mb-3 w-full"
+            />
+
+            <p className="text-sm mb-4 line-clamp-2">
+              {video.title}
+            </p>
+
+            {/* TYPE BUTTONS */}
+            <div className="flex gap-3 mb-4">
               <button
-                className={type === "audio" ? "active" : ""}
                 onClick={() => setType("audio")}
+                className={`flex-1 py-2 rounded-lg ${type === "audio"
+                  ? "bg-green-600"
+                  : "bg-white/10 hover:bg-white/20"
+                  }`}
               >
                 🎵 Audio
               </button>
 
               <button
-                className={type === "video" ? "active" : ""}
                 onClick={() => setType("video")}
+                className={`flex-1 py-2 rounded-lg ${type === "video"
+                  ? "bg-blue-600"
+                  : "bg-white/10 hover:bg-white/20"
+                  }`}
               >
                 🎬 Video
               </button>
             </div>
 
-            <button className="download-btn" onClick={download}>
-              ⬇ Download
+            {/* DOWNLOAD */}
+            <button
+              onClick={download}
+              className="w-full py-3 bg-gradient-to-r from-pink-500 to-purple-600 rounded-lg font-bold hover:scale-105 transition"
+            >
+              ⬇ Download Now
             </button>
           </div>
         )}
