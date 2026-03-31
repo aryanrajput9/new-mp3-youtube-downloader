@@ -1,10 +1,14 @@
 const express = require("express");
 const cors = require("cors");
 const { spawn } = require("child_process");
+const path = require("path");
 
 const app = express();
 
 app.use(cors({ origin: "*" }));
+
+// 📁 cookies file path
+const cookiesPath = path.join(__dirname, "cookies.txt");
 
 // 🔥 Normalize URL
 const cleanURL = (url) => {
@@ -33,7 +37,7 @@ app.get("/", (req, res) => {
 
 
 // =======================
-// 🎥 VIDEO INFO (FIXED)
+// 🎥 VIDEO INFO
 // =======================
 app.get("/info", (req, res) => {
     let { url } = req.query;
@@ -43,13 +47,15 @@ app.get("/info", (req, res) => {
 
     const yt = spawn("python3", [
         "-m", "yt_dlp",
+
+        "--cookies", cookiesPath,
+
         "--dump-json",
         "--no-playlist",
         "--no-warnings",
 
         "--extractor-args", "youtube:player_client=android,player_skip=webpage",
-        "--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
-        "--add-header", "accept-language:en-US,en;q=0.9",
+        "--user-agent", "Mozilla/5.0",
 
         url,
     ]);
@@ -85,7 +91,7 @@ app.get("/info", (req, res) => {
 
 
 // =======================
-// 🎵 AUDIO (FIXED)
+// 🎵 AUDIO DOWNLOAD
 // =======================
 app.get("/audio", (req, res) => {
     let { url } = req.query;
@@ -97,13 +103,15 @@ app.get("/audio", (req, res) => {
 
     const yt = spawn("python3", [
         "-m", "yt_dlp",
+
+        "--cookies", cookiesPath,
+
         "-f", "bestaudio",
         "--no-playlist",
         "--no-warnings",
 
         "--extractor-args", "youtube:player_client=android,player_skip=webpage",
-        "--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
-        "--add-header", "accept-language:en-US,en;q=0.9",
+        "--user-agent", "Mozilla/5.0",
 
         "-o", "-",
         url,
@@ -118,7 +126,7 @@ app.get("/audio", (req, res) => {
 
 
 // =======================
-// 🎬 VIDEO (FIXED)
+// 🎬 VIDEO DOWNLOAD
 // =======================
 app.get("/video", (req, res) => {
     let { url } = req.query;
@@ -130,13 +138,15 @@ app.get("/video", (req, res) => {
 
     const yt = spawn("python3", [
         "-m", "yt_dlp",
+
+        "--cookies", cookiesPath,
+
         "-f", "best",
         "--no-playlist",
         "--no-warnings",
 
         "--extractor-args", "youtube:player_client=android,player_skip=webpage",
-        "--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
-        "--add-header", "accept-language:en-US,en;q=0.9",
+        "--user-agent", "Mozilla/5.0",
 
         "-o", "-",
         url,
