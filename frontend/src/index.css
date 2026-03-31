@@ -1,0 +1,103 @@
+body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+}
+
+/* 🌈 Background */
+.app {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+/* 💎 Glass Card */
+.glass-card {
+  width: 420px;
+  padding: 30px;
+  border-radius: 20px;
+  backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  color: white;
+  text-align: center;
+}
+
+/* 🔤 Heading */
+h1 {
+  margin-bottom: 20px;
+}
+
+/* 📦 Input */
+.input-box {
+  display: flex;
+  gap: 10px;
+}
+
+.input-box input {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+}
+
+/* 🔘 Buttons */
+button {
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  background: #00c9a7;
+  color: white;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+button:hover {
+  transform: scale(1.05);
+  background: #00b894;
+}
+
+/* 🎬 Card */
+.card {
+  margin-top: 20px;
+}
+
+.card img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.title {
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+/* 🎵 Audio/Video buttons */
+.type-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+.type-buttons button {
+  width: 48%;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.type-buttons button.active {
+  background: #ff7675;
+}
+
+/* ⬇ Download */
+.download-btn {
+  margin-top: 20px;
+  width: 100%;
+  background: #6c5ce7;
+}
+
+.download-btn:hover {
+  background: #5a4fcf;
+}
