@@ -4,10 +4,7 @@ const { spawn } = require("child_process");
 
 const app = express();
 
-// 🔥 IMPORTANT (Render + frontend)
-app.use(cors({
-    origin: "*"
-}));
+app.use(cors({ origin: "*" }));
 
 // 🔥 Normalize URL
 const cleanURL = (url) => {
@@ -29,15 +26,17 @@ const cleanURL = (url) => {
     }
 };
 
-// ✅ ROOT ROUTE (Render health check)
+// ✅ ROOT
 app.get("/", (req, res) => {
     res.send("API is running 🚀");
 });
 
-/* 🎥 VIDEO INFO */
+
+// =======================
+// 🎥 VIDEO INFO (FIXED)
+// =======================
 app.get("/info", (req, res) => {
     let { url } = req.query;
-
     if (!url) return res.status(400).send("URL missing");
 
     url = cleanURL(url);
@@ -45,11 +44,13 @@ app.get("/info", (req, res) => {
     const yt = spawn("yt-dlp", [
         "--dump-json",
         "--no-playlist",
+        "--no-warnings",
+        "--user-agent", "Mozilla/5.0",
+        "--extractor-args", "youtube:player_client=android",
         url,
     ]);
 
     let data = "";
-    let hasError = false;
 
     yt.stdout.on("data", (chunk) => {
         data += chunk;
@@ -57,19 +58,9 @@ app.get("/info", (req, res) => {
 
     yt.stderr.on("data", (err) => {
         console.log("❌ STDERR:", err.toString());
-        hasError = true;
     });
 
-    yt.on("error", (err) => {
-        console.log("❌ SPAWN ERROR:", err);
-        return res.status(500).send("yt-dlp failed");
-    });
-
-    yt.on("close", (code) => {
-        if (code !== 0 || hasError) {
-            return res.status(500).send("Failed to fetch video info");
-        }
-
+    yt.on("close", () => {
         try {
             const json = JSON.parse(data);
 
@@ -84,10 +75,12 @@ app.get("/info", (req, res) => {
     });
 });
 
-/* 🎵 AUDIO */
+
+// =======================
+// 🎵 AUDIO (FIXED)
+// =======================
 app.get("/audio", (req, res) => {
     let { url } = req.query;
-
     if (!url) return res.status(400).send("URL missing");
 
     url = cleanURL(url);
@@ -95,8 +88,11 @@ app.get("/audio", (req, res) => {
     res.header("Content-Disposition", 'attachment; filename="audio.mp3"');
 
     const yt = spawn("yt-dlp", [
-        "-x",
-        "--audio-format", "mp3",
+        "-f", "bestaudio",
+        "--no-playlist",
+        "--no-warnings",
+        "--user-agent", "Mozilla/5.0",
+        "--extractor-args", "youtube:player_client=android",
         "-o", "-",
         url,
     ]);
@@ -105,17 +101,15 @@ app.get("/audio", (req, res) => {
         console.log("❌ AUDIO ERROR:", err.toString());
     });
 
-    yt.on("error", () => {
-        res.status(500).send("Audio failed");
-    });
-
     yt.stdout.pipe(res);
 });
 
-/* 🎬 VIDEO */
+
+// =======================
+// 🎬 VIDEO (FIXED)
+// =======================
 app.get("/video", (req, res) => {
     let { url } = req.query;
-
     if (!url) return res.status(400).send("URL missing");
 
     url = cleanURL(url);
@@ -124,6 +118,10 @@ app.get("/video", (req, res) => {
 
     const yt = spawn("yt-dlp", [
         "-f", "best",
+        "--no-playlist",
+        "--no-warnings",
+        "--user-agent", "Mozilla/5.0",
+        "--extractor-args", "youtube:player_client=android",
         "-o", "-",
         url,
     ]);
@@ -132,16 +130,15 @@ app.get("/video", (req, res) => {
         console.log("❌ VIDEO ERROR:", err.toString());
     });
 
-    yt.on("error", () => {
-        res.status(500).send("Video failed");
-    });
-
     yt.stdout.pipe(res);
 });
 
-// 🔥 VERY IMPORTANT FOR RENDER
-const PORT = process.env.PORT || 5000;
+
+// =======================
+// 🚀 SERVER
+// =======================
+const PORT = process.env.PORT || 10000;
 
 app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
-});   
+});
