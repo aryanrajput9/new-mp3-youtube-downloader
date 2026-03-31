@@ -49,27 +49,24 @@ app.get("/info", (req, res) => {
     ]);
 
     let data = "";
+    let hasError = false;
 
     yt.stdout.on("data", (chunk) => {
         data += chunk;
     });
 
     yt.stderr.on("data", (err) => {
-        console.log("⚠️ STDERR:", err.toString());
-        // ❌ error flag mat lagao
+        console.log("❌ STDERR:", err.toString());
+        hasError = true;
     });
 
     yt.on("error", (err) => {
         console.log("❌ SPAWN ERROR:", err);
-        if (!res.headersSent) {
-            return res.status(500).send("yt-dlp failed");
-        }
+        return res.status(500).send("yt-dlp failed");
     });
 
     yt.on("close", (code) => {
-        if (res.headersSent) return; // 🔥 IMPORTANT
-
-        if (code !== 0) {
+        if (code !== 0 || hasError) {
             return res.status(500).send("Failed to fetch video info");
         }
 
@@ -147,4 +144,4 @@ const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
-});
+});   ye dekh
