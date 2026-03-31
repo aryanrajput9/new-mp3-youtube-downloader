@@ -1,0 +1,6 @@
+# Netscape HTTP Cookie File
+# https://curl.haxx.se/rfc/cookie_spec.html
+# This is a generated file! Do not edit.
+
+new-mp3-youtube-downloader-5nwo-6dw4nzzjc.vercel.app	FALSE	/	FALSE	1803993640	__vercel_toolbar	1
+new-mp3-youtube-downloader-5nwo-6dw4nzzjc.vercel.app	FALSE	/	TRUE	1782739240	_vercel_jwt	eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3NzQ5NjMyNDUsInVzZXJuYW1lIjoiYXJ5YW5yYWpwdXQ5Iiwib3duZXJJZCI6InRlYW1fRFNNaURFVVkwVVQwa2pTMDd6VzY2YUxpIiwidXNlcklkIjoiNjh6QXIwQ2loalZkd3hsRVhiRGd0MUlsIiwic3ViIjoic3NvLXByb3RlY3Rpb24iLCJhdWQiOiJuZXctbXAzLXlvdXR1YmUtZG93bmxvYWRlci01bndvLTZkdzRuenpqYy52ZXJjZWwuYXBwIn0.M0Ih5HiwBdTz8H_JpqMekjkOR0Nu0CPoPGisDBvicCc
