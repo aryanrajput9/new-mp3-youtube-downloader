@@ -3,7 +3,11 @@ const cors = require("cors");
 const { spawn } = require("child_process");
 
 const app = express();
-app.use(cors());
+
+// 🔥 IMPORTANT (Render + frontend)
+app.use(cors({
+    origin: "*"
+}));
 
 // 🔥 Normalize URL
 const cleanURL = (url) => {
@@ -24,6 +28,11 @@ const cleanURL = (url) => {
         return url;
     }
 };
+
+// ✅ ROOT ROUTE (Render health check)
+app.get("/", (req, res) => {
+    res.send("API is running 🚀");
+});
 
 /* 🎥 VIDEO INFO */
 app.get("/info", (req, res) => {
@@ -53,7 +62,7 @@ app.get("/info", (req, res) => {
 
     yt.on("error", (err) => {
         console.log("❌ SPAWN ERROR:", err);
-        res.status(500).send("yt-dlp not found or failed");
+        return res.status(500).send("yt-dlp failed");
     });
 
     yt.on("close", (code) => {
@@ -70,7 +79,7 @@ app.get("/info", (req, res) => {
             });
         } catch (e) {
             console.log("❌ JSON ERROR:", e);
-            res.status(500).send("Failed to parse video info");
+            res.status(500).send("Parse error");
         }
     });
 });
@@ -83,6 +92,8 @@ app.get("/audio", (req, res) => {
 
     url = cleanURL(url);
 
+    res.header("Content-Disposition", 'attachment; filename="audio.mp3"');
+
     const yt = spawn("yt-dlp", [
         "-x",
         "--audio-format", "mp3",
@@ -90,25 +101,14 @@ app.get("/audio", (req, res) => {
         url,
     ]);
 
-    let errorOccurred = false;
-
     yt.stderr.on("data", (err) => {
         console.log("❌ AUDIO ERROR:", err.toString());
-        errorOccurred = true;
     });
 
     yt.on("error", () => {
-        errorOccurred = true;
-        res.status(500).send("Audio download failed");
+        res.status(500).send("Audio failed");
     });
 
-    yt.on("close", (code) => {
-        if (code !== 0 && !errorOccurred) {
-            res.status(500).send("Audio download failed");
-        }
-    });
-
-    res.header("Content-Disposition", 'attachment; filename="audio.mp3"');
     yt.stdout.pipe(res);
 });
 
@@ -120,34 +120,28 @@ app.get("/video", (req, res) => {
 
     url = cleanURL(url);
 
+    res.header("Content-Disposition", 'attachment; filename="video.mp4"');
+
     const yt = spawn("yt-dlp", [
         "-f", "best",
         "-o", "-",
         url,
     ]);
 
-    let errorOccurred = false;
-
     yt.stderr.on("data", (err) => {
         console.log("❌ VIDEO ERROR:", err.toString());
-        errorOccurred = true;
     });
 
     yt.on("error", () => {
-        errorOccurred = true;
-        res.status(500).send("Video download failed");
+        res.status(500).send("Video failed");
     });
 
-    yt.on("close", (code) => {
-        if (code !== 0 && !errorOccurred) {
-            res.status(500).send("Video download failed");
-        }
-    });
-
-    res.header("Content-Disposition", 'attachment; filename="video.mp4"');
     yt.stdout.pipe(res);
 });
 
-app.listen(5000, () => {
-    console.log("🚀 Server running on http://localhost:5000");
+// 🔥 VERY IMPORTANT FOR RENDER
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
 });
