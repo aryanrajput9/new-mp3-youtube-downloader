@@ -1,9 +1,13 @@
 const express = require("express");
 const cors = require("cors");
-const { spawn } = require("child_process");
+const ytdlp = require("yt-dlp-exec");
 
 const app = express();
-app.use(cors());
+
+// ✅ CORS
+app.use(cors({
+    origin: "*"
+}));
 
 // 🔥 Normalize URL
 const cleanURL = (url) => {
@@ -25,93 +29,97 @@ const cleanURL = (url) => {
     }
 };
 
-/* 🎥 VIDEO INFO */
+// ✅ ROOT
+app.get("/", (req, res) => {
+    res.send("API is running 🚀");
+});
+
+
+// 🎥 VIDEO INFO
 app.get("/info", async (req, res) => {
     try {
         let { url } = req.query;
+        if (!url) return res.status(400).send("URL missing");
+
         url = cleanURL(url);
 
-        const yt = spawn("/opt/homebrew/bin/yt-dlp", [
-            "--dump-json",
-            "--no-playlist",
-            url,
-        ]);
-
-        yt.on("error", (err) => {
-            console.log("❌ ERROR:", err);
-            res.status(500).send("yt-dlp error");
-        });
-        let data = "";
-
-        yt.stdout.on("data", (chunk) => {
-            data += chunk;
+        const data = await ytdlp(url, {
+            dumpSingleJson: true,
+            noPlaylist: true,
         });
 
-        yt.on("close", () => {
-            const json = JSON.parse(data);
-            res.json({
-                title: json.title,
-                thumbnail: json.thumbnail,
-            });
+        res.json({
+            title: data.title,
+            thumbnail: data.thumbnail,
         });
 
     } catch (err) {
-        console.log(err);
-        res.status(500).send("Info error");
+        console.log("❌ INFO ERROR:", err);
+        res.status(500).send("Failed to fetch info");
     }
 });
 
-/* 🎵 AUDIO */
-app.get("/audio", (req, res) => {
+
+// 🎵 AUDIO DOWNLOAD
+app.get("/audio", async (req, res) => {
     try {
         let { url } = req.query;
+        if (!url) return res.status(400).send("URL missing");
+
         url = cleanURL(url);
 
         res.header("Content-Disposition", 'attachment; filename="audio.mp3"');
 
-        const yt = spawn("yt-dlp", [
-            "-x",
-            "--audio-format", "mp3",
-            "-o", "-",
-            url,
-        ]);
+        const stream = ytdlp.exec(url, {
+            extractAudio: true,
+            audioFormat: "mp3",
+            output: "-",
+        });
 
-        yt.stdout.pipe(res);
+        stream.stdout.pipe(res);
 
-        yt.stderr.on("data", (err) => {
-            console.log("❌ AUDIO ERROR:", err.toString());
+        stream.stderr.on("data", (err) => {
+            console.log("⚠️ AUDIO STDERR:", err.toString());
         });
 
     } catch (err) {
-        console.log(err);
-        res.status(500).send("Audio error");
+        console.log("❌ AUDIO ERROR:", err);
+        res.status(500).send("Audio failed");
     }
 });
 
-/* 🎬 VIDEO */
-app.get("/video", (req, res) => {
+
+// 🎬 VIDEO DOWNLOAD
+app.get("/video", async (req, res) => {
     try {
         let { url } = req.query;
+        if (!url) return res.status(400).send("URL missing");
+
         url = cleanURL(url);
 
         res.header("Content-Disposition", 'attachment; filename="video.mp4"');
 
-        const yt = spawn("yt-dlp", [
-            "-f", "best",
-            "-o", "-",
-            url,
-        ]);
+        const stream = ytdlp.exec(url, {
+            format: "best",
+            output: "-",
+        });
 
-        yt.stdout.pipe(res);
+        stream.stdout.pipe(res);
 
-        yt.stderr.on("data", (err) => {
-            console.log("❌ VIDEO ERROR:", err.toString());
+        stream.stderr.on("data", (err) => {
+            console.log("⚠️ VIDEO STDERR:", err.toString());
         });
 
     } catch (err) {
-        console.log(err);
-        res.status(500).send("Video error");
+        console.log("❌ VIDEO ERROR:", err);
+        res.status(500).send("Video failed");
     }
 });
 
-app.listen(5000, () => console.log("🚀 Server running on port 5000"));
+
+// 🔥 IMPORTANT (Render ke liye)
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+});
