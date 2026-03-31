@@ -1,6 +1,10 @@
 # Netscape HTTP Cookie File
-# https://curl.haxx.se/rfc/cookie_spec.html
-# This is a generated file! Do not edit.
-
-new-mp3-youtube-downloader-5nwo-6dw4nzzjc.vercel.app	FALSE	/	FALSE	1803993640	__vercel_toolbar	1
-new-mp3-youtube-downloader-5nwo-6dw4nzzjc.vercel.app	FALSE	/	TRUE	1782739240	_vercel_jwt	eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3NzQ5NjMyNDUsInVzZXJuYW1lIjoiYXJ5YW5yYWpwdXQ5Iiwib3duZXJJZCI6InRlYW1fRFNNaURFVVkwVVQwa2pTMDd6VzY2YUxpIiwidXNlcklkIjoiNjh6QXIwQ2loalZkd3hsRVhiRGd0MUlsIiwic3ViIjoic3NvLXByb3RlY3Rpb24iLCJhdWQiOiJuZXctbXAzLXlvdXR1YmUtZG93bmxvYWRlci01bndvLTZkdzRuenpqYy52ZXJjZWwuYXBwIn0.M0Ih5HiwBdTz8H_JpqMekjkOR0Nu0CPoPGisDBvicCc
+.youtube.com	TRUE	/	FALSE	1809526398	APISID	VKgo0VxMr-5vGbGF/AWgz80Ldra5lLQFj-
+.youtube.com	TRUE	/	FALSE	1809526398	SAPISID	GIOekdSzyb2d6br7/AzoBv9itwrk-s7eM7
+.youtube.com	TRUE	/	FALSE	1809526398	SID	g.a0008QjlAO3kDUjuoJgI51aOH30nYSgG4237o2WjqLjUsevnNJgpWD_8wub-YlvdTIlzf0GshgACgYKAeESARMSFQHGX2MiPGp-sgSKil59fNYIUAEQzxoVAUF8yKrsvIpBfouvkIRfN4XWxfQH0076
+.youtube.com	TRUE	/	FALSE	1809526398	HSID	AuuBTRtD6_HG-Dcht
+.youtube.com	TRUE	/	FALSE	1809526398	SSID	AlCnqPLbSywcQPcLZ
+.youtube.com	TRUE	/	FALSE	1809526398	LOGIN_INFO	AFmmF2swRgIhAMy1ku70OgpurGMQwURLxznM6uLpOH6h-WmV_Cvyr-3bAiEA9VN6_zCgaJ32Re5aJfBkaqfLdDxtp5lCutj11gos2gQ:QUQ3MjNmd1RkSVZOcWhmX2hJYUF6WnZoSW1pTnNhU0k3SUFmSDB2RGFqbS1DUjhDUUM1RVF2a3lYWnZsNFN3akdUNmJsNXdrbFhvZzhRcTdiRUdQXzVIbTdQbmhHek82QXFjaFpWQWVNX1huWk9iSG1qbi13RXVYQXNyb09zQjBLZmtLenFOemd0ZnJuaXRUMzBpV21EbTlmVmtINGs2Mk9B
+.youtube.com	TRUE	/	FALSE	1809526403	PREF	f4=4000000&f6=40000000&tz=Asia.Kolkata
+.youtube.com	TRUE	/	FALSE	1790518400	VISITOR_INFO1_LIVE	VQD1xo1ZFj0
+.youtube.com	TRUE	/	FALSE	0	YSC	TQw4AF0VBp4

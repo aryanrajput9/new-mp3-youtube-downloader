@@ -136,7 +136,7 @@ app.get("/video", (req, res) => {
 
     res.header("Content-Disposition", 'attachment; filename="video.mp4"');
 
-    const yt = spawn("python3", [
+    const yt = spawn("python", [
         "-m", "yt_dlp",
 
         "--cookies", cookiesPath,
