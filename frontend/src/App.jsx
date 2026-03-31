@@ -37,7 +37,7 @@ export default function App() {
   return (
     <div className="app">
       <div className="glass-card">
-        <h1>🚀 YT Downloader PRO</h1>
+        <h1>🚀 YT Downloader</h1>
 
         <div className="input-box">
           <input
