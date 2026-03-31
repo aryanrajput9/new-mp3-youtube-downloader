@@ -41,12 +41,16 @@ app.get("/info", (req, res) => {
 
     url = cleanURL(url);
 
-    const yt = spawn("yt-dlp", [
+    const yt = spawn("python3", [
+        "-m", "yt_dlp",
         "--dump-json",
         "--no-playlist",
         "--no-warnings",
-        "--user-agent", "Mozilla/5.0",
-        "--extractor-args", "youtube:player_client=android",
+
+        "--extractor-args", "youtube:player_client=android,player_skip=webpage",
+        "--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+        "--add-header", "accept-language:en-US,en;q=0.9",
+
         url,
     ]);
 
@@ -57,10 +61,14 @@ app.get("/info", (req, res) => {
     });
 
     yt.stderr.on("data", (err) => {
-        console.log("❌ STDERR:", err.toString());
+        console.log("❌ INFO ERROR:", err.toString());
     });
 
     yt.on("close", () => {
+        if (!data) {
+            return res.status(500).send("No data from yt-dlp");
+        }
+
         try {
             const json = JSON.parse(data);
 
@@ -87,12 +95,16 @@ app.get("/audio", (req, res) => {
 
     res.header("Content-Disposition", 'attachment; filename="audio.mp3"');
 
-    const yt = spawn("yt-dlp", [
+    const yt = spawn("python3", [
+        "-m", "yt_dlp",
         "-f", "bestaudio",
         "--no-playlist",
         "--no-warnings",
-        "--user-agent", "Mozilla/5.0",
-        "--extractor-args", "youtube:player_client=android",
+
+        "--extractor-args", "youtube:player_client=android,player_skip=webpage",
+        "--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+        "--add-header", "accept-language:en-US,en;q=0.9",
+
         "-o", "-",
         url,
     ]);
@@ -118,11 +130,15 @@ app.get("/video", (req, res) => {
 
     const yt = spawn("python3", [
         "-m", "yt_dlp",
-        "--dump-json",
+        "-f", "best",
         "--no-playlist",
         "--no-warnings",
-        "--user-agent", "Mozilla/5.0",
-        "--extractor-args", "youtube:player_client=android",
+
+        "--extractor-args", "youtube:player_client=android,player_skip=webpage",
+        "--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+        "--add-header", "accept-language:en-US,en;q=0.9",
+
+        "-o", "-",
         url,
     ]);
 
