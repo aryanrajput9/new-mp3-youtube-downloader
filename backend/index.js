@@ -49,24 +49,27 @@ app.get("/info", (req, res) => {
     ]);
 
     let data = "";
-    let hasError = false;
 
     yt.stdout.on("data", (chunk) => {
         data += chunk;
     });
 
     yt.stderr.on("data", (err) => {
-        console.log("❌ STDERR:", err.toString());
-        hasError = true;
+        console.log("⚠️ STDERR:", err.toString());
+        // ❌ error flag mat lagao
     });
 
     yt.on("error", (err) => {
         console.log("❌ SPAWN ERROR:", err);
-        return res.status(500).send("yt-dlp failed");
+        if (!res.headersSent) {
+            return res.status(500).send("yt-dlp failed");
+        }
     });
 
     yt.on("close", (code) => {
-        if (code !== 0 || hasError) {
+        if (res.headersSent) return; // 🔥 IMPORTANT
+
+        if (code !== 0) {
             return res.status(500).send("Failed to fetch video info");
         }
 
