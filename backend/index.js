@@ -11,6 +11,9 @@ app.use(cors({ origin: "*" }));
 // 📁 cookies file path
 const cookiesPath = path.join(__dirname, "cookies.txt");
 
+// 🌐 PROXY (CHANGE THIS)
+const PROXY = "http://103.205.64.153:80"; // 👈 yaha apna proxy daal
+
 // 🔥 Normalize URL
 const cleanURL = (url) => {
     try {
@@ -48,6 +51,8 @@ app.get("/info", (req, res) => {
 
     const yt = spawn("python3", [
         "-m", "yt_dlp",
+
+        "--proxy", PROXY,
 
         "--cookies", cookiesPath,
 
@@ -103,6 +108,8 @@ app.get("/audio", (req, res) => {
     const yt = spawn("python3", [
         "-m", "yt_dlp",
 
+        "--proxy", PROXY,
+
         "--cookies", cookiesPath,
 
         "-f", "bestaudio/best",
@@ -142,6 +149,8 @@ app.get("/video", (req, res) => {
 
     const yt = spawn("python3", [
         "-m", "yt_dlp",
+
+        "--proxy", PROXY,
 
         "--cookies", cookiesPath,
 
