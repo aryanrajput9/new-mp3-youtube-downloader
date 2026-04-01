@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const API = "https://new-mp3-youtube-downloader-1.onrender.comS";
+const API = "https://new-mp3-youtube-downloader-1.onrender.com";
 
 export default function App() {
   const [url, setUrl] = useState("");

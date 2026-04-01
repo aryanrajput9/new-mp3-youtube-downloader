@@ -3,13 +3,15 @@ const cors = require("cors");
 const { spawn } = require("child_process");
 const path = require("path");
 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
 const app = express();
 app.use(cors({ origin: "*" }));
 
 // 📁 cookies file path
 const cookiesPath = path.join(__dirname, "cookies.txt");
 
-// 🔥 Normalize URL (shorts + youtu.be fix)
+// 🔥 Normalize URL
 const cleanURL = (url) => {
     try {
         const parsed = new URL(url);
@@ -46,12 +48,18 @@ app.get("/info", (req, res) => {
 
     const yt = spawn("python3", [
         "-m", "yt_dlp",
+
         "--cookies", cookiesPath,
+
         "--dump-json",
         "--no-playlist",
         "--no-warnings",
-        "--extractor-args", "youtube:player_client=android,player_skip=webpage",
-        "--user-agent", "Mozilla/5.0",
+        "--no-check-certificate",
+        "--geo-bypass",
+
+        "--extractor-args", "youtube:player_client=android",
+        "--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+
         url,
     ]);
 
@@ -82,7 +90,7 @@ app.get("/info", (req, res) => {
 
 
 // =======================
-// 🎵 AUDIO DOWNLOAD (MP3)
+// 🎵 AUDIO DOWNLOAD
 // =======================
 app.get("/audio", (req, res) => {
     let { url } = req.query;
@@ -103,9 +111,11 @@ app.get("/audio", (req, res) => {
 
         "--no-playlist",
         "--no-warnings",
+        "--no-check-certificate",
+        "--geo-bypass",
 
-        "--extractor-args", "youtube:player_client=android,player_skip=webpage",
-        "--user-agent", "Mozilla/5.0",
+        "--extractor-args", "youtube:player_client=android",
+        "--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
 
         "-o", "-",
         url,
@@ -139,9 +149,11 @@ app.get("/video", (req, res) => {
 
         "--no-playlist",
         "--no-warnings",
+        "--no-check-certificate",
+        "--geo-bypass",
 
-        "--extractor-args", "youtube:player_client=android,player_skip=webpage",
-        "--user-agent", "Mozilla/5.0",
+        "--extractor-args", "youtube:player_client=android",
+        "--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
 
         "-o", "-",
         url,
