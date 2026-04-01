@@ -11,8 +11,6 @@ app.use(cors({ origin: "*" }));
 // 📁 cookies file path
 const cookiesPath = path.join(__dirname, "cookies.txt");
 
-
-
 // 🔥 Normalize URL
 const cleanURL = (url) => {
     try {
@@ -50,8 +48,6 @@ app.get("/info", (req, res) => {
 
     const yt = spawn("python3", [
         "-m", "yt_dlp",
-
-        "--proxy", PROXY,
 
         "--cookies", cookiesPath,
 
@@ -107,8 +103,6 @@ app.get("/audio", (req, res) => {
     const yt = spawn("python3", [
         "-m", "yt_dlp",
 
-        "--proxy", PROXY,
-
         "--cookies", cookiesPath,
 
         "-f", "bestaudio/best",
@@ -148,8 +142,6 @@ app.get("/video", (req, res) => {
 
     const yt = spawn("python3", [
         "-m", "yt_dlp",
-
-        "--proxy", PROXY,
 
         "--cookies", cookiesPath,
 
