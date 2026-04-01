@@ -4,13 +4,12 @@ const { spawn } = require("child_process");
 const path = require("path");
 
 const app = express();
-
 app.use(cors({ origin: "*" }));
 
 // 📁 cookies file path
 const cookiesPath = path.join(__dirname, "cookies.txt");
 
-// 🔥 Normalize URL
+// 🔥 Normalize URL (shorts + youtu.be fix)
 const cleanURL = (url) => {
     try {
         const parsed = new URL(url);
@@ -47,16 +46,12 @@ app.get("/info", (req, res) => {
 
     const yt = spawn("python3", [
         "-m", "yt_dlp",
-
         "--cookies", cookiesPath,
-
         "--dump-json",
         "--no-playlist",
         "--no-warnings",
-
         "--extractor-args", "youtube:player_client=android,player_skip=webpage",
         "--user-agent", "Mozilla/5.0",
-
         url,
     ]);
 
@@ -71,19 +66,15 @@ app.get("/info", (req, res) => {
     });
 
     yt.on("close", () => {
-        if (!data) {
-            return res.status(500).send("No data from yt-dlp");
-        }
+        if (!data) return res.status(500).send("No data");
 
         try {
             const json = JSON.parse(data);
-
             res.json({
                 title: json.title,
                 thumbnail: json.thumbnail,
             });
-        } catch (e) {
-            console.log("❌ JSON ERROR:", e);
+        } catch {
             res.status(500).send("Parse error");
         }
     });
@@ -91,7 +82,7 @@ app.get("/info", (req, res) => {
 
 
 // =======================
-// 🎵 AUDIO DOWNLOAD
+// 🎵 AUDIO DOWNLOAD (MP3)
 // =======================
 app.get("/audio", (req, res) => {
     let { url } = req.query;
@@ -106,7 +97,10 @@ app.get("/audio", (req, res) => {
 
         "--cookies", cookiesPath,
 
-        "-f", "bestaudio",
+        "-f", "bestaudio/best",
+        "--extract-audio",
+        "--audio-format", "mp3",
+
         "--no-playlist",
         "--no-warnings",
 
@@ -136,12 +130,13 @@ app.get("/video", (req, res) => {
 
     res.header("Content-Disposition", 'attachment; filename="video.mp4"');
 
-    const yt = spawn("python", [
+    const yt = spawn("python3", [
         "-m", "yt_dlp",
 
         "--cookies", cookiesPath,
 
-        "-f", "best",
+        "-f", "bv*+ba/best",
+
         "--no-playlist",
         "--no-warnings",
 
