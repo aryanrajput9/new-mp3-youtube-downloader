@@ -12,7 +12,7 @@ app.use(cors({ origin: "*" }));
 const cookiesPath = path.join(__dirname, "cookies.txt");
 
 // 🌐 PROXY (CHANGE THIS)
-const PROXY = "http://103.205.64.153:80"; // 👈 yaha apna proxy daal
+const PROXY = "http://8.219.97.248:80"; // 👈 yaha apna proxy daal
 
 // 🔥 Normalize URL
 const cleanURL = (url) => {
